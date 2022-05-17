@@ -17,7 +17,7 @@
       <div class="popup-content">
         <h2>Add new recipe</h2>
 
-        <form @submit.prevent>
+        <form @submit.prevent="addNewRecipe">
           <div class="group">
             <label>Title</label>
             <input type="text" />
@@ -30,18 +30,18 @@
 
           <div class="group">
             <label>Ingredients</label>
-            <div class="ingredients">
-              <input type="text" />
+            <div class="ingredients" v-for="i in newRecipe.ingredientRows" :key="i">
+              <input type="text" v-model="newRecipe.ingredients[i - 1]" />
             </div>
-            <button type="button">Add Ingredients</button>
+            <button type="button" @click="addNewIngredient">Add Ingredients</button>
           </div>
 
           <div class="group">
             <label>Method</label>
-            <div class="method">
-              <textarea></textarea>
+            <div class="method" v-for="i in newRecipe.methodRows" :key="i">
+              <textarea v-model="newRecipe.method[i - 1]"></textarea>
             </div>
-            <button type="button">Step</button>
+            <button type="button" @click="addNewStep">Step</button>
           </div>
 
           <button type="submit">Add Recipe</button>
@@ -54,6 +54,7 @@
 
 <script>
 import { ref } from "vue";
+import {useStore} from "vuex";
 
 export default {
   name: "HomeView",
@@ -66,15 +67,37 @@ export default {
       ingredientRows: 1,
       methodRows: 1,
     });
+
     const popupOpen = ref(false);
+
     const togglePopup = () => {
       popupOpen.value = !popupOpen.value;
     };
+
+    const addNewIngredient = () => {
+      newRecipe.value.ingredientRows++;
+    };
+
+    const addNewStep = () => {
+      newRecipe.value.methodRows++;
+    };
+
+    const addNewRecipe = () => {
+      newRecipe.value.slug = newRecipe.value.title.toLowerCase().replace(/\s/g, "-");
+
+      if (newRecipe.vaue.slug == '') {
+        alert('Please enter a title');
+      }
+    }
+
 
     return {
       newRecipe,
       popupOpen,
       togglePopup,
+      addNewIngredient,
+      addNewStep,
+      addNewRecipe
     };
   },
 };
